@@ -3,7 +3,7 @@
 client_id = "874abb13b4d8a8a32a366141dd26e13f"
 name = "Voice Search RVS"
 handle = "voice-search-app"
-application_url = "https://substantial-wake-aspects-extras.trycloudflare.com"
+application_url = "https://definitely-vernon-sonic-pittsburgh.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://substantial-wake-aspects-extras.trycloudflare.com/auth/callback",
-  "https://substantial-wake-aspects-extras.trycloudflare.com/auth/shopify/callback",
-  "https://substantial-wake-aspects-extras.trycloudflare.com/api/auth/callback"
+  "https://definitely-vernon-sonic-pittsburgh.trycloudflare.com/auth/callback",
+  "https://definitely-vernon-sonic-pittsburgh.trycloudflare.com/auth/shopify/callback",
+  "https://definitely-vernon-sonic-pittsburgh.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
