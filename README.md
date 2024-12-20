@@ -8,7 +8,7 @@ Visit the [`shopify.dev` documentation](https://shopify.dev/docs/api/shopify-app
 
 ## Quick start
 
-### Prerequisites
+### Prerequisites 
 
 Before you begin, you'll need the following:
 
