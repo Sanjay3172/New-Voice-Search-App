@@ -3,7 +3,7 @@
 client_id = "874abb13b4d8a8a32a366141dd26e13f"
 name = "Voice Search RVS"
 handle = "voice-search-app"
-application_url = "https://blackberry-elect-offense-casey.trycloudflare.com"
+application_url = "https://substantial-wake-aspects-extras.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://blackberry-elect-offense-casey.trycloudflare.com/auth/callback",
-  "https://blackberry-elect-offense-casey.trycloudflare.com/auth/shopify/callback",
-  "https://blackberry-elect-offense-casey.trycloudflare.com/api/auth/callback"
+  "https://substantial-wake-aspects-extras.trycloudflare.com/auth/callback",
+  "https://substantial-wake-aspects-extras.trycloudflare.com/auth/shopify/callback",
+  "https://substantial-wake-aspects-extras.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
