@@ -3,7 +3,7 @@
 client_id = "874abb13b4d8a8a32a366141dd26e13f"
 name = "Voice Search RVS"
 handle = "voice-search-app"
-application_url = "https://lose-plants-explains-germany.trycloudflare.com"
+application_url = "https://pm-lake-stan-defense.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://lose-plants-explains-germany.trycloudflare.com/auth/callback",
-  "https://lose-plants-explains-germany.trycloudflare.com/auth/shopify/callback",
-  "https://lose-plants-explains-germany.trycloudflare.com/api/auth/callback"
+  "https://pm-lake-stan-defense.trycloudflare.com/auth/callback",
+  "https://pm-lake-stan-defense.trycloudflare.com/auth/shopify/callback",
+  "https://pm-lake-stan-defense.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
