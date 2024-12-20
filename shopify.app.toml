@@ -3,7 +3,7 @@
 client_id = "874abb13b4d8a8a32a366141dd26e13f"
 name = "Voice Search RVS"
 handle = "voice-search-app"
-application_url = "https://renew-shed-against-clothing.trycloudflare.com"
+application_url = "https://during-liked-hot-charger.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://renew-shed-against-clothing.trycloudflare.com/auth/callback",
-  "https://renew-shed-against-clothing.trycloudflare.com/auth/shopify/callback",
-  "https://renew-shed-against-clothing.trycloudflare.com/api/auth/callback"
+  "https://during-liked-hot-charger.trycloudflare.com/auth/callback",
+  "https://during-liked-hot-charger.trycloudflare.com/auth/shopify/callback",
+  "https://during-liked-hot-charger.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
