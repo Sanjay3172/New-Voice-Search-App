@@ -3,7 +3,7 @@
 client_id = "874abb13b4d8a8a32a366141dd26e13f"
 name = "Voice Search RVS"
 handle = "voice-search-app"
-application_url = "https://during-liked-hot-charger.trycloudflare.com"
+application_url = "https://guru-advocate-kits-story.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://during-liked-hot-charger.trycloudflare.com/auth/callback",
-  "https://during-liked-hot-charger.trycloudflare.com/auth/shopify/callback",
-  "https://during-liked-hot-charger.trycloudflare.com/api/auth/callback"
+  "https://guru-advocate-kits-story.trycloudflare.com/auth/callback",
+  "https://guru-advocate-kits-story.trycloudflare.com/auth/shopify/callback",
+  "https://guru-advocate-kits-story.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
