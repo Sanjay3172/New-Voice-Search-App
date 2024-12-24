@@ -1,0 +1,44 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "874abb13b4d8a8a32a366141dd26e13f"
+application_url = "https://quotations-citations-obligation-unlike.trycloudflare.com"
+embedded = true
+name = "Voice Search RVS"
+handle = "voice-search-app"
+
+[webhooks]
+api_version = "2024-07"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/data_request"
+  compliance_topics = [ "customers/data_request" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/redact"
+  compliance_topics = [ "customers/redact" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/shop/redact"
+  compliance_topics = [ "shop/redact" ]
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "https://renew-shed-against-clothing.trycloudflare.com/webhooks/app/uninstalled"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://quotations-citations-obligation-unlike.trycloudflare.com/auth/callback",
+  "https://quotations-citations-obligation-unlike.trycloudflare.com/auth/shopify/callback",
+  "https://quotations-citations-obligation-unlike.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
+
+[build]
+dev_store_url = "recent-view.myshopify.com"
+automatically_update_urls_on_dev = true

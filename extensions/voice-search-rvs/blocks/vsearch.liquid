@@ -1,0 +1,462 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js" integrity="sha512-6sSYJqDreZRZGkJ3b+YfdhB3MzmuP9R7X1QZ6g5aIXhRvR1Y/N/P47jmnkENm7YL3oqsmI6AK+V6AD99uWDnIw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+button#voiceSearchBtn,
+button.voice-search-btn,
+button.rvs-mic-btn { 
+    font-size: {{ block.settings.icon_size }}px;
+    cursor:pointer; 
+    align-items: center;
+    background-color: transparent;
+    border: 0;
+    color: currentColor;
+    cursor: pointer;
+    display: flex;
+    height: 4.4rem;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    right: {{ block.settings.right_space}}px; 
+    top: 0;
+    width: 4.4rem;
+} 
+.facets form button.voice-search-btn {
+    display: none;
+}
+form.search button.reset__button {
+    right: 6.4rem;
+}
+button#voiceSearchBtn svg, button.voice-search-btn svg, button.rvs-mic-btn i {
+    color: {{ block.settings.colour }};
+}
+form.search .reset__button:not(:focus):after{
+  right: 5px;
+}
+form.search .field {
+    display: inline-block;
+}
+</style>
+{% assign avg_rating = block.settings.product.metafields.demo.avg_rating.value | round %}
+{% comment %}
+  <span style="color:{{ block.settings.colour }}">
+    {% render 'stars', rating: avg_rating %}
+  </span> 
+ {% endcomment %} 
+
+
+{% if block.settings.Vsearch %}
+<script>
+  setTimeout(function() {
+(function() {
+	'use strict';
+	// check for support (webkit only)
+	if (!('webkitSpeechRecognition' in window)) return;
+
+	var talkMsg = 'Speak now';
+	// seconds to wait for more input after last
+  	var defaultPatienceThreshold = 3;
+
+	function capitalize(str) {
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	}
+	var allMIC
+
+	var inputEls = document.querySelectorAll("input[voice_search=enable]");
+	[].forEach.call(inputEls, function(inputEl) {
+		var patience = parseInt(inputEl.dataset.patience, 10) || defaultPatienceThreshold;
+		var micBtn, micIcon, holderIcon, newWrapper;
+		var shouldCapitalize = true;
+
+		// gather inputEl data
+		var nextNode = inputEl.nextSibling;
+		var parent = inputEl.parentNode;
+		var inputRightBorder = parseInt(getComputedStyle(inputEl).borderRightWidth, 10);
+		
+		var buttonSize = 0.8 * (inputEl.dataset.buttonsize || inputEl.offsetHeight);
+		// default max size for textareas
+		if (!inputEl.dataset.buttonsize && inputEl.tagName === 'TEXTAREA' && buttonSize > 26) {
+			buttonSize = 26;
+		}
+
+		// create wrapper if not present
+		var wrapper = inputEl.parentNode;
+		if (!wrapper.classList.contains('rvs-mic-wrapper')) {
+			wrapper = document.createElement('div');
+			wrapper.classList.add('rvs-mic-wrapper');
+			wrapper.appendChild(parent.removeChild(inputEl));
+			newWrapper = true;
+		}
+
+		// create mic button if not present
+        micBtn = wrapper.querySelector('.rvs-mic-btn');
+        if (!micBtn) {
+            micBtn = document.createElement('button');
+            micBtn.type = 'button';
+            micBtn.classList.add('rvs-mic-btn');
+            micBtn.innerHTML = '<i class="material-icons">mic</i>'; // Replaced SVG with Font Awesome icon
+            wrapper.appendChild(micBtn);
+
+            // size and position mic and input
+            wrapper.style.display = 'flex';
+
+            micBtn.style.cursor = 'pointer';
+        }
+
+		// append wrapper where input was
+		if (newWrapper) parent.insertBefore(wrapper, nextNode);
+
+		if(('webkitSpeechRecognition' in window)){
+			// setup recognition
+			var prefix = '';
+			var isSentence;
+			var recognizing = false;
+			var timeout;
+			var oldPlaceholder = null;
+			var recognition = new webkitSpeechRecognition();
+			recognition.continuous = true;
+			recognition.interimResults = true;
+
+			// if lang attribute is set on field use that
+			// (defaults to use the lang of the root element)
+			if (inputEl.lang) recognition.lang = inputEl.lang;
+
+			function restartTimer() {
+				timeout = setTimeout(function() {
+					recognition.stop();
+				}, patience * 1000);
+			}
+
+			recognition.onstart = function() {
+				oldPlaceholder = inputEl.placeholder;
+				inputEl.placeholder = inputEl.dataset.ready || talkMsg;
+				recognizing = true;
+				micBtn.classList.add('listening');
+				restartTimer();
+			};
+
+			recognition.onend = function() {
+				recognizing = false;
+				allMIC.forEach(function(element) {
+					element.style.display = 'none';
+				});
+				clearTimeout(timeout);
+				micBtn.classList.remove('listening');
+				
+				if (oldPlaceholder !== null) inputEl.placeholder = oldPlaceholder;
+
+				// If the <input> has data-instant-submit and a value,
+				if (inputEl.dataset.instantSubmit !== undefined && inputEl.value) {
+					// submit the form it's in (if it is in one).
+					if (inputEl.form) inputEl.form.submit();
+				}
+			};
+
+			recognition.onresult = function(event) {
+				clearTimeout(timeout);
+
+				// get SpeechRecognitionResultList object
+				var resultList = event.results;
+
+				// go through each SpeechRecognitionResult object in the list
+				var finalTranscript = '';
+				var interimTranscript = '';
+				for (var i = event.resultIndex; i < resultList.length; ++i) {
+					var result = resultList[i];
+ 
+					// get this result's first SpeechRecognitionAlternative object
+					var firstAlternative = result[0];
+
+					if (result.isFinal) {
+						finalTranscript = firstAlternative.transcript;
+					} else {
+						interimTranscript += firstAlternative.transcript;
+					}
+				}
+				// capitalize transcript if start of new sentence
+				var transcript = finalTranscript || interimTranscript;
+				transcript = !prefix || isSentence ? capitalize(transcript) : transcript;
+
+				// append transcript to cached input value
+				inputEl.value = prefix + transcript;
+
+				// set cursur and scroll to end
+				inputEl.focus();
+				if (inputEl.tagName === 'INPUT') {
+					inputEl.scrollLeft = inputEl.scrollWidth;
+				} else {
+					inputEl.scrollTop = inputEl.scrollHeight;
+				}
+
+				restartTimer();
+			};
+		}
+
+		micBtn.addEventListener('click', function(event) {
+			allMIC = document.querySelectorAll('.rvs-mic-btn .hide_mic');
+			allMIC.forEach(function(element) {
+				element.style.display = 'none';
+			});
+
+			event.preventDefault();
+
+			// stop and exit if already going
+			// console.log(recognizing);
+			let hideMicElements = micBtn.querySelectorAll('.rvs-mic-btn .hide_mic');
+			if (recognizing) {
+				recognition.stop();
+				hideMicElements.forEach(function(element) {
+					element.style.display = 'none';
+				});
+				return;
+			}else{
+				hideMicElements.forEach(function(element) {
+					element.style.display = 'block';
+				});
+			}
+
+			// Cache current input value which the new transcript will be appended to
+			var endsWithWhitespace = inputEl.value.slice(-1).match(/\s/);
+			prefix = !inputEl.value || endsWithWhitespace ? inputEl.value : inputEl.value + ' ';
+
+			// check if value ends with a sentence
+			isSentence = prefix.trim().slice(-1).match(/[\.\?\!]/);
+
+			// restart recognition
+			recognition.start();
+		}, false);
+	});
+})();
+ console.log("news");
+ }, 1500);
+  </script>
+{% endif %}
+ 
+{% unless block.settings.search_icon == false %}
+
+  <script> 
+  console.log("Use Default search box to add mic ");
+    setTimeout(function() {
+    (function() {
+        'use strict';
+        // check for support (webkit only)
+        if (!('webkitSpeechRecognition' in window)) return;
+
+        var talkMsg = 'Speak now';
+        // seconds to wait for more input after last
+        var defaultPatienceThreshold = 3;
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        var allMIC
+
+        var inputEls = document.querySelectorAll("input[name=q], input[name=search]");
+        [].forEach.call(inputEls, function(inputEl) {
+            var patience = parseInt(inputEl.dataset.patience, 10) || defaultPatienceThreshold;
+            var micBtn, micIcon, holderIcon, newWrapper;
+            var shouldCapitalize = true;
+
+            // gather inputEl data
+            var nextNode = inputEl.nextSibling;
+            var parent = inputEl.parentNode;
+            var inputRightBorder = parseInt(getComputedStyle(inputEl).borderRightWidth, 10);
+            
+            var buttonSize = 0.8 * (inputEl.dataset.buttonsize || inputEl.offsetHeight);
+            // default max size for textareas
+            if (!inputEl.dataset.buttonsize && inputEl.tagName === 'TEXTAREA' && buttonSize > 26) {
+                buttonSize = 26;
+            }
+
+            // create wrapper if not present
+            var wrapper = inputEl.parentNode;
+            if (!wrapper.classList.contains('rvs-mic-wrapper')) {
+                wrapper = document.createElement('div');
+                wrapper.classList.add('rvs-mic-wrapper');
+                wrapper.appendChild(parent.removeChild(inputEl));
+                newWrapper = true;
+            }
+
+            // create mic button if not present
+            micBtn = wrapper.querySelector('.rvs-mic-btn');
+            if (!micBtn) {
+                micBtn = document.createElement('button');
+                micBtn.type = 'button';
+                micBtn.classList.add('rvs-mic-btn');
+                micBtn.innerHTML = '<i class="material-icons">mic</i>'; // Replaced SVG with Font Awesome icon
+                wrapper.appendChild(micBtn);
+
+                // size and position mic and input
+                wrapper.style.display = 'flex';
+
+                micBtn.style.cursor = 'pointer';
+            }
+
+            // append wrapper where input was
+            if (newWrapper) parent.insertBefore(wrapper, nextNode);
+
+            if(('webkitSpeechRecognition' in window)){
+                // setup recognition
+                var prefix = '';
+                var isSentence;
+                var recognizing = false;
+                var timeout;
+                var oldPlaceholder = null;
+                var recognition = new webkitSpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+
+                // if lang attribute is set on field use that
+                // (defaults to use the lang of the root element)
+                if (inputEl.lang) recognition.lang = inputEl.lang;
+
+                function restartTimer() {
+                    timeout = setTimeout(function() {
+                        recognition.stop();
+                    }, patience * 1000);
+                }
+
+                recognition.onstart = function() {
+                    oldPlaceholder = inputEl.placeholder;
+                    inputEl.placeholder = inputEl.dataset.ready || talkMsg;
+                    recognizing = true;
+                    micBtn.classList.add('listening');
+                    restartTimer();
+                };
+
+                recognition.onend = function() {
+                    recognizing = false;
+                    allMIC.forEach(function(element) {
+                        element.style.display = 'none';
+                    });
+                    clearTimeout(timeout);
+                    micBtn.classList.remove('listening');
+                    
+                    if (oldPlaceholder !== null) inputEl.placeholder = oldPlaceholder;
+
+                    // If the <input> has data-instant-submit and a value,
+                    if (inputEl.dataset.instantSubmit !== undefined && inputEl.value) {
+                        // submit the form it's in (if it is in one).
+                        if (inputEl.form) inputEl.form.submit();
+                    }
+                };
+
+                recognition.onresult = function(event) {
+                    clearTimeout(timeout);
+
+                    // get SpeechRecognitionResultList object
+                    var resultList = event.results;
+
+                    // go through each SpeechRecognitionResult object in the list
+                    var finalTranscript = '';
+                    var interimTranscript = '';
+                    for (var i = event.resultIndex; i < resultList.length; ++i) {
+                        var result = resultList[i];
+    
+                        // get this result's first SpeechRecognitionAlternative object
+                        var firstAlternative = result[0];
+
+                        if (result.isFinal) {
+                            finalTranscript = firstAlternative.transcript;
+                        } else {
+                            interimTranscript += firstAlternative.transcript;
+                        }
+                    }
+                    // capitalize transcript if start of new sentence
+                    var transcript = finalTranscript || interimTranscript;
+                    transcript = !prefix || isSentence ? capitalize(transcript) : transcript;
+
+                    // append transcript to cached input value
+                    inputEl.value = prefix + transcript;
+
+                    // set cursur and scroll to end
+                    inputEl.focus();
+                    if (inputEl.tagName === 'INPUT') {
+                        inputEl.scrollLeft = inputEl.scrollWidth;
+                    } else {
+                        inputEl.scrollTop = inputEl.scrollHeight;
+                    }
+
+                    restartTimer();
+                };
+            }
+
+            micBtn.addEventListener('click', function(event) {
+                allMIC = document.querySelectorAll('.rvs-mic-btn .hide_mic');
+                allMIC.forEach(function(element) {
+                    element.style.display = 'none';
+                });
+
+                event.preventDefault();
+
+                // stop and exit if already going
+                // console.log(recognizing);
+                let hideMicElements = micBtn.querySelectorAll('.rvs-mic-btn .hide_mic');
+                if (recognizing) {
+                    recognition.stop();
+                    hideMicElements.forEach(function(element) {
+                        element.style.display = 'none';
+                    });
+                    return;
+                }else{
+                    hideMicElements.forEach(function(element) {
+                        element.style.display = 'block';
+                    });
+                }
+
+                // Cache current input value which the new transcript will be appended to
+                var endsWithWhitespace = inputEl.value.slice(-1).match(/\s/);
+                prefix = !inputEl.value || endsWithWhitespace ? inputEl.value : inputEl.value + ' ';
+
+                // check if value ends with a sentence
+                isSentence = prefix.trim().slice(-1).match(/[\.\?\!]/);
+
+                // restart recognition
+                recognition.start();
+            }, false);
+        });
+    })();
+    console.log("news");
+    }, 1500);
+  </script>
+  {% endunless %} 
+
+  {% unless block.settings.search_icon %}
+    <script>
+    console.log("Update n custom place");
+    </script>
+  {% endunless %}
+ 
+{% schema %}
+{
+  "name": "Voice Search",
+  "target": "compliance_head", 
+  "settings": [ 
+    { "type": "checkbox", "id": "Vsearch", "label": "Voice Search", "default": true },
+    { "type": "checkbox", "id": "search_icon", "label": "Search Icon", "default": true, "info": "Enable to use the deafult voice search box, disbale to add it on custom search where you have to append attirbute voice_search='enable' in same search input." }, 
+    { "type": "color", "id": "colour", "label": "Icon Colour", "default": "#000" },
+    {
+      "type": "range",
+      "id": "icon_size", 
+      "min": 12, 
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "right_space",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Right Gap",
+      "default": 32
+    }
+
+  ]
+}
+{% endschema %}
